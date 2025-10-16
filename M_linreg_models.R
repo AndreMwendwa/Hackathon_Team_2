@@ -1,7 +1,11 @@
+rm(list=ls())
 library(tidyverse)
 library(MASS)
+library(data.table)
 
-(data <- read_csv('data_combined_with_dummies_weather.csv'))
+data1 <- data.table::fread("Hackathon_Team_2/data_raw/data_combined_with_dummies_weather_first_half.csv")
+data2 <- data.table::fread("Hackathon_Team_2/data_raw/data_combined_with_dummies_weather_second_half.csv")
+data <- rbind(data1,data2)
 
 # Getting M
 alpha_model <- lm(avg_fare ~ avg_trip_distance, data = data, weights = trip_ct)
@@ -33,6 +37,9 @@ M_regression <- lm(M ~ avg_trip_distance + origin_demand + dest_demand + precip_
                    , data=data, weights=trip_ct)
 summary(M_regression)
 
+
+data.table::fwrite(file = "Hackathon_Team_2/data_raw/M_regression_combined.csv"
+                   ,x = data)
 
 # # Robust regression
 # M_reg_robust <- rlm(M ~ avg_trip_distance + origin_demand + dest_demand + precip_amount_mm + origin_ward_modified
